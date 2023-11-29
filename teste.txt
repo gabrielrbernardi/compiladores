@@ -1,7 +1,8 @@
 repeat
-program inicio()
-{dalton pikas}
-begin
+program inicio()(
+IDADE
+14
+begin {
 a := 3;
 b := 2;
 s = a + b

@@ -5,6 +5,8 @@ from lexico_simbolos import Tabela_Simbolos
 # global quantidade_Abre_Parenteses, quantidade_Fecha_Parenteses
 quantidade_Abre_Parenteses = 0
 quantidade_Fecha_Parenteses = 0
+quantidade_Abre_Chaves = 0
+quantidade_Fecha_Chaves = 0
 tem_transicao = False
 
 def leitura_arquivo_entrada(nome_arquivo):
@@ -109,21 +111,54 @@ def insere_tabela(lexema, tabela):
         "then",
         "program",
         "begin",
-        "end"        
+        "end"
+    ]
+
+    operadores = [
+        ":=",
+        "=",
+        "!=",
+        ">=",
+        ">",
+        "<=",
+        "<",
+        "+",
+        "-",
+        "*",
+        "/",
+        "^"
     ]
 
     if lex in reservado:
-        print(tabela.inserir(token_tipo = tipo, lexema = lex))
+        retorno_insercao = tabela.inserir(token_tipo = tipo, lexema = lex)
         # return tabela.inserir(token_tipo = tipo, lexema = lex)
-        return
+        # return
     
-    if tipo in [lexico_transicao.Token.ID]:
-        print("ID Adicionado", lexema)
-        tabela.inserir(token_tipo=tipo, lexema=lex, tipo_dado="ID", valor=None)
+    elif lex in operadores:
+        retorno_insercao = tabela.inserir(token_tipo = tipo, lexema = lex)
+        # return
+    
+    elif tipo in [lexico_transicao.Token.ID]:
+        retorno_insercao = tabela.inserir(token_tipo=tipo, lexema=lex, tipo_dado="ID", valor=None)
+        # print(retorno_insercao)
+        # print("ID Adicionado", end="")
 
-    if tipo in [lexico_transicao.Token.CONST_INT, lexico_transicao.Token.CONST_FLOAT, lexico_transicao.Token.NC, lexico_transicao.Token.CHAR]:
-        print("Constante Adicionada")
-        tabela.inserir(token_tipo=tipo, lexema=lex, valor=None, tipo_dado=None)
+    elif tipo in [lexico_transicao.Token.CONST_INT, lexico_transicao.Token.CONST_FLOAT, lexico_transicao.Token.NC, lexico_transicao.Token.CHAR]:
+        retorno_insercao = tabela.inserir(token_tipo=tipo, lexema=lex, valor=None, tipo_dado=None)
+        # print(retorno_insercao)
+        # print("Constante Adicionada", end="")
+
+    try:
+        if (retorno_insercao):
+            # print("\n")
+            print("Tipo", retorno_insercao["tipo"])
+            print("Lexema", retorno_insercao["lexema"])
+            if(retorno_insercao["dado"]):
+                print("Tipo de dado", retorno_insercao["dado"])
+            print("Indice", retorno_insercao["indice"])
+            print("\n")
+    except:
+        pass
 
 def verifica_valores(lexema):
     #contagem de caracteres que tem que ser fechados
@@ -131,18 +166,26 @@ def verifica_valores(lexema):
     if lexema == "(":
         global quantidade_Abre_Parenteses
         quantidade_Abre_Parenteses += 1
-        print("abre", quantidade_Abre_Parenteses)
+        # print("abre", quantidade_Abre_Parenteses)
+    
+    if lexema == "{":
+        global quantidade_Abre_Chaves
+        quantidade_Abre_Chaves += 1
 
     if lexema == ")":
         global quantidade_Fecha_Parenteses
         quantidade_Fecha_Parenteses += 1
-        print("fecha", quantidade_Fecha_Parenteses)
+        # print("fecha", quantidade_Fecha_Parenteses)
+    
+    if lexema == "}":
+        global quantidade_Fecha_Chaves
+        quantidade_Fecha_Chaves += 1
 
     if lexema == '$':
-        print("Final de Arquivo. Leitura encerrada. Tudo OK!")
-        if quantidade_Abre_Parenteses == quantidade_Fecha_Parenteses:
+        if quantidade_Abre_Parenteses == quantidade_Fecha_Parenteses and quantidade_Abre_Chaves == quantidade_Fecha_Chaves:
+            print("Final de Arquivo. Leitura encerrada. Tudo OK!")
             # print("ta ok")
             pass
         else:
-            print("ERRO! A utilizacao dos parenteses nao esta correta")
+            print("ERRO! A utilizacao dos parenteses ou chaves nao esta correta")
         return -1

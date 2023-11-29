@@ -2,11 +2,11 @@ from lexico_transicao import Token
 
 class Tabela_Simbolos:
     tabela_simbolos = {}
+    indice = 0
     def init(self):
         self.tabela_simbolos = {}
 
     def inserir(self, token_tipo, lexema, valor=None, tipo_dado=""):
-        
         #reconhecimento de palavras reservadas
         if lexema == "repeat":
             token_tipo = Token.REPEAT
@@ -27,13 +27,44 @@ class Tabela_Simbolos:
         if lexema == "end":
             token_tipo = Token.END
 
+        #OPERADORES RELACIONAIS - RELOP
+        if lexema == "=":
+            token_tipo = Token.RELOP_EQ
+        if lexema == "!=":
+            token_tipo = Token.RELOP_NE
+        if lexema == ">=":
+            token_tipo = Token.RELOP_GE
+        if lexema == ">":
+            token_tipo = Token.RELOP_GT
+        if lexema == "<=":
+            token_tipo = Token.RELOP_LE
+        if lexema == "<":
+            token_tipo = Token.RELOP_LT
+
+        #OPERADORES ARITMETICOS
+        if lexema == "+":
+            token_tipo = Token.SUM
+        if lexema == "-":
+            token_tipo = Token.SUB
+        if lexema == "*":
+            token_tipo = Token.MUL
+        if lexema == "/":
+            token_tipo = Token.DIV
+        if lexema == "^":
+            token_tipo = Token.EXP
+
+        #ATRIBUICAO
+        if lexema == ":=":
+            token_tipo = Token.ATRIBUICAO
         
         self.tabela_simbolos[lexema] = {
             "tipo": token_tipo,
             "lexema": lexema,
             "valor": valor,
             "dado": tipo_dado,
+            "indice": self.indice
         }
+        self.indice += 1
 
         return self.tabela_simbolos[lexema]
 
