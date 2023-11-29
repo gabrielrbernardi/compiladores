@@ -1,0 +1,18 @@
+repeat
+program inicio()
+{dalton pikas}
+begin
+a := 3;
+b := 2;
+s = a + b
+while y
+if z < 2
+then
+x = s
+else
+x = a
+repeat
+a = 5
+until b >= 5;
+end
+$
