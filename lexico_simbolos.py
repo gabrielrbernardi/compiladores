@@ -6,59 +6,59 @@ class Tabela_Simbolos:
     def init(self):
         self.tabela_simbolos = {}
 
-    def inserir(self, token_tipo, lexema, valor=None, tipo_dado=""):
+    def insercao(self, tipo, lexema, valor=None, tipo_dado=""):
         #reconhecimento de palavras reservadas
         if lexema == "repeat":
-            token_tipo = Token.REPEAT
+            tipo = Token.REPEAT
         if lexema == "until":
-            token_tipo = Token.UNTIL
+            tipo = Token.UNTIL
         if lexema == "while":
-            token_tipo = Token.WHILE
+            tipo = Token.WHILE
         if lexema == "if":
-            token_tipo = Token.COND_IF
+            tipo = Token.COND_IF
         if lexema == "else":
-            token_tipo = Token.COND_ELSE
+            tipo = Token.COND_ELSE
         if lexema == "then":
-            token_tipo = Token.COND_THEN
+            tipo = Token.COND_THEN
         if lexema == "program":
-            token_tipo = Token.PROGRAM
+            tipo = Token.PROGRAM
         if lexema == "begin":
-            token_tipo = Token.BEGIN
+            tipo = Token.BEGIN
         if lexema == "end":
-            token_tipo = Token.END
+            tipo = Token.END
 
         #OPERADORES RELACIONAIS - RELOP
         if lexema == "=":
-            token_tipo = Token.RELOP_EQ
+            tipo = Token.RELOP_EQ
         if lexema == "!=":
-            token_tipo = Token.RELOP_NE
+            tipo = Token.RELOP_NE
         if lexema == ">=":
-            token_tipo = Token.RELOP_GE
+            tipo = Token.RELOP_GE
         if lexema == ">":
-            token_tipo = Token.RELOP_GT
+            tipo = Token.RELOP_GT
         if lexema == "<=":
-            token_tipo = Token.RELOP_LE
+            tipo = Token.RELOP_LE
         if lexema == "<":
-            token_tipo = Token.RELOP_LT
+            tipo = Token.RELOP_LT
 
         #OPERADORES ARITMETICOS
         if lexema == "+":
-            token_tipo = Token.SUM
+            tipo = Token.SUM
         if lexema == "-":
-            token_tipo = Token.SUB
+            tipo = Token.SUB
         if lexema == "*":
-            token_tipo = Token.MUL
+            tipo = Token.MUL
         if lexema == "/":
-            token_tipo = Token.DIV
+            tipo = Token.DIV
         if lexema == "^":
-            token_tipo = Token.EXP
+            tipo = Token.EXP
 
         #ATRIBUICAO
         if lexema == ":=":
-            token_tipo = Token.ATRIBUICAO
+            tipo = Token.ATRIBUICAO
         
         self.tabela_simbolos[lexema] = {
-            "tipo": token_tipo,
+            "tipo": tipo,
             "lexema": lexema,
             "valor": valor,
             "dado": tipo_dado,

@@ -1,0 +1,10 @@
+program inicio()
+begin
+valorA := 200;
+valorB := 5;
+resultado := valorA + valorB;
+repeat
+a := a + 10;
+until a < 300;
+end }
+$

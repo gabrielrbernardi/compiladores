@@ -1,13 +1,10 @@
-repeat
-program inicio()(
-IDADE
-14
-begin {
+program inicio()
+begin
 a := 3;
 b := 2;
-s = a + b
-while y
-if z < 2
+s := a + b
+while x
+if x < 2
 then
 x = s
 else

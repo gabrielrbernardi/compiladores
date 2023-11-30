@@ -9,88 +9,77 @@ quantidade_Abre_Chaves = 0
 quantidade_Fecha_Chaves = 0
 tem_transicao = False
 
-def leitura_arquivo_entrada(nome_arquivo):
-    with open(nome_arquivo, "r") as f:
-        qtd_linhas = 0
-        for x in f:
-            qtd_linhas += 1
-            qtd_colunas = 0
-            for c in x:
-                qtd_colunas += 1
-                yield {"cabeca": c, "linha_caractere": qtd_linhas, "coluna_caractere": qtd_colunas}
+def leitura_arquivo_entrada(arquivo_entrada):
+    f = open(arquivo_entrada, "r") #abertura do arquivo de entrada
+    
+    qtd_linhas = 0
+    while True:
+        linha = f.readline() #leitura de cada linha da entrada
+        if not linha: #se nao existir conteudo na linha, finaliza a leitura
+            break
+        qtd_linhas += 1
+        qtd_colunas = 0
+        for c in linha: #leitura de cada caractere
+            qtd_colunas += 1
+            yield {
+                "cabeca": c, 
+                "linha_caractere": qtd_linhas, 
+                "coluna_caractere": qtd_colunas
+            }
 
-def analisador_lexico(nome_arquivo):
-    tabela = lexico_transicao.transicoes()
+def analisador_lexico(arquivo_entrada):
+    tabela_transicao = lexico_transicao.transicoes()
     flag = 0
     lexema = ""
-    leitor = leitura_arquivo_entrada(nome_arquivo)
+    objeto_entrada = leitura_arquivo_entrada(arquivo_entrada)
 
-    inicio_lexema = (0, 0)
+    inicio_posicao_lexema = (0, 0)
     tem_transicao = False
-    for char in leitor:
+    for c in objeto_entrada: #percorre cada caractere lido
         if len(lexema) == 0:
-            inicio_lexema = (char["linha_caractere"], char["coluna_caractere"])
-            
-        if tabela[flag].EH_FINAL:
+            inicio_posicao_lexema = (c["linha_caractere"], c["coluna_caractere"])
+        
+        if tabela_transicao[flag].EH_FINAL:
             if verifica_valores(lexema) == -1:
                 return
-            if tabela[flag].LOOKAHEAD:
-                yield (lexema[:-1], tabela[flag].RETORNO, inicio_lexema)
+            if tabela_transicao[flag].LOOKAHEAD:
+                yield (lexema[:-1], tabela_transicao[flag].RETORNO, inicio_posicao_lexema)
                 lexema = ""
                 flag = 0
-                inicio_lexema = (char["linha_caractere"], char["coluna_caractere"])
+                inicio_posicao_lexema = (c["linha_caractere"], c["coluna_caractere"])
             else:
-                yield (lexema, tabela[flag].RETORNO, inicio_lexema)
+                yield (lexema, tabela_transicao[flag].RETORNO, inicio_posicao_lexema)
                 lexema = ""
                 flag = 0
-                inicio_lexema = (char["linha_caractere"], char["coluna_caractere"])
+                inicio_posicao_lexema = (c["linha_caractere"], c["coluna_caractere"])
 
-        if not tabela[flag].EH_FINAL:
-            lexema, flag, tem_transicao = troca_estado(
-                tabela, char, flag, lexema
-            )
+        if not tabela_transicao[flag].EH_FINAL:
+            lexema, flag, tem_transicao = troca_estado(tabela_transicao, c, flag, lexema)
 
-        if not tem_transicao and not (tabela[flag].EH_FINAL):
-            flag = -1
-
-        if flag == -1:
-            print(
-                f'Erro no char {char} no lexema = "{lexema}" len = {len(lexema)}')
+        if not tem_transicao and not (tabela_transicao[flag].EH_FINAL):
+            print("ERRO!\nLexema: " + str(lexema))
+            print("Posicao: " + "Linha: " + str(c["linha_caractere"]) + " Coluna: " + str(c["coluna_caractere"]))
             break
 
-        if tabela[flag].EH_FINAL:
-            if verifica_valores(lexema) == -1:
-                return
-            if tabela[flag].LOOKAHEAD:
-                yield (lexema[:-1], tabela[flag].RETORNO, inicio_lexema)
-                lexema = ""
-                flag = 0
-                inicio_lexema = (char["linha_caractere"], char["coluna_caractere"])
-                lexema, flag, tem_transicao = troca_estado(
-                    tabela, char, flag, lexema
-                )
-            else:
-                yield (lexema, tabela[flag].RETORNO, inicio_lexema)
-                lexema = ""
-                flag = 0
-                inicio_lexema = (char["linha_caractere"], char["coluna_caractere"])
-
-def troca_estado(tabela, char, estado, lexema):
-    lexema = lexema + char["cabeca"]
-    # print(f'TransicoesAFD = {estado}, char = {char}, lexema = "{lexema}", len = {len(lexema)}')
+def troca_estado(tabela, caractere, flag, lexema):
+    lexema += caractere["cabeca"]
 
     tem_transicao = False
 
-    for trans in tabela[estado].TRANSICOES:
-        if char["cabeca"] in trans[0]:
-            estado = trans[1]
+    for transicao in tabela[flag].TRANSICOES:
+        if caractere["cabeca"] in transicao[0]:
             tem_transicao = True
-    return lexema, estado, tem_transicao
+            flag = transicao[1]
+    
+    return lexema, flag, tem_transicao
 
-def inicia_lexico(nome_arquivo, tabela_simbolo):
-    for lexema in analisador_lexico(nome_arquivo):
+def inicia_lexico(arquivo_entrada, tabela):
+    lexico = analisador_lexico(arquivo_entrada)
+    
+    for lexema in lexico:
         if not lexema[1] == lexico_transicao.Token.INICIO:
-            resultado = insere_tabela(lexema=lexema, tabela=tabela_simbolo)
+            resultado = insere_tabela(lexema, tabela)
+            
             if resultado:
                 yield resultado["tipo"], resultado["tipo"], lexema[2]
             else:
@@ -100,8 +89,7 @@ def insere_tabela(lexema, tabela):
     tipo = lexema[1]
     lex = lexema[0]
 
-    # print(lexema, tipo, lex)
-
+    #definicao de palavras reservadas
     reservado = [
         "repeat",
         "until",
@@ -114,6 +102,7 @@ def insere_tabela(lexema, tabela):
         "end"
     ]
 
+    #definicao dos operadores
     operadores = [
         ":=",
         "=",
@@ -130,32 +119,32 @@ def insere_tabela(lexema, tabela):
     ]
 
     if lex in reservado:
-        retorno_insercao = tabela.inserir(token_tipo = tipo, lexema = lex)
-        # return tabela.inserir(token_tipo = tipo, lexema = lex)
+        retorno_insercao = tabela.insercao(tipo = tipo, lexema = lex)
+        # return tabela.insercao(tipo = tipo, lexema = lex)
         # return
     
     elif lex in operadores:
-        retorno_insercao = tabela.inserir(token_tipo = tipo, lexema = lex)
+        retorno_insercao = tabela.insercao(tipo = tipo, lexema = lex)
         # return
     
     elif tipo in [lexico_transicao.Token.ID]:
-        retorno_insercao = tabela.inserir(token_tipo=tipo, lexema=lex, tipo_dado="ID", valor=None)
+        retorno_insercao = tabela.insercao(tipo=tipo, lexema=lex, tipo_dado="ID", valor=None)
         # print(retorno_insercao)
         # print("ID Adicionado", end="")
 
     elif tipo in [lexico_transicao.Token.CONST_INT, lexico_transicao.Token.CONST_FLOAT, lexico_transicao.Token.NC, lexico_transicao.Token.CHAR]:
-        retorno_insercao = tabela.inserir(token_tipo=tipo, lexema=lex, valor=None, tipo_dado=None)
+        retorno_insercao = tabela.insercao(tipo=tipo, lexema=lex, valor=None, tipo_dado=None)
         # print(retorno_insercao)
         # print("Constante Adicionada", end="")
 
     try:
         if (retorno_insercao):
             # print("\n")
-            print("Tipo", retorno_insercao["tipo"])
-            print("Lexema", retorno_insercao["lexema"])
-            if(retorno_insercao["dado"]):
-                print("Tipo de dado", retorno_insercao["dado"])
-            print("Indice", retorno_insercao["indice"])
+            print("Tipo:", retorno_insercao["tipo"])
+            print("Lexema:", retorno_insercao["lexema"])
+            # if(retorno_insercao["dado"]):
+            #     print("Tipo de dado:", retorno_insercao["dado"])
+            print("Indice:", retorno_insercao["indice"])
             print("\n")
     except:
         pass
