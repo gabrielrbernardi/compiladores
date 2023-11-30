@@ -1,5 +1,4 @@
 import lexico_analisador
-import lexico_transicao
 import lexico_simbolos
 
 teste01 = "C:\\Users\\gabri\\Documentos\\UFU\\2023 - 2023-1\\CC\\Trabalho Final Final\\Codigo\\exemplos\\exemplo01.txt"
