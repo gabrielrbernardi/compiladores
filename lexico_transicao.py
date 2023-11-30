@@ -155,17 +155,17 @@ def transicoes():
 
 
 def verifica_transicoes(tabela):
-    tabela = {}
+    table = {}
 
-    for x in tabela:
-        tabela[x.N_TRANSICAO] = x
+    for elem in tabela:
+        table[elem.N_TRANSICAO] = elem
 
-    for _, x in tabela.items():
+    for _, x in table.items():
         for transicao in x.TRANSICOES:
-            if transicao[1] not in tabela:
+            if transicao[1] not in table:
                 print("Transicao Invalida!")
                 print("Indice: " + str(x))
                 print("Transicao: " + str(transicao))
                 exit(-1)
 
-    return tabela
+    return table
