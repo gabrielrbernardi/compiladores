@@ -66,9 +66,3 @@ class Tabela_Simbolos:
         self.indice += 1
 
         return self.tabela_simbolos[lexema]
-
-    def buscar(self, lexema):
-        return self.tabela_simbolos.get(lexema, None)
-
-    def listar_todos(self):
-        return list(self.tabela_simbolos.values())

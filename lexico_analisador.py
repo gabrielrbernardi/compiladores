@@ -7,18 +7,6 @@ quantidade_Abre_Chaves = 0
 quantidade_Fecha_Chaves = 0
 tem_transicao = False
 
-def inicia_lexico(arquivo_entrada, tabela):
-    lexico = analisador_lexico(arquivo_entrada)
-    
-    for lexema in lexico:
-        if not lexema[1] == lexico_transicao.Token.INICIO:
-            resultado = insere_tabela(lexema, tabela)
-            
-            if resultado:
-                yield resultado["tipo"], lexema[2]
-            else:
-                yield lexema
-
 def leitura_arquivo_entrada(arquivo_entrada):
     f = open(arquivo_entrada, "r") #abertura do arquivo de entrada
     
@@ -36,6 +24,18 @@ def leitura_arquivo_entrada(arquivo_entrada):
                 "linha_caractere": qtd_linhas, 
                 "coluna_caractere": qtd_colunas
             }
+
+def inicia_lexico(arquivo_entrada, tabela):
+    lexico = analisador_lexico(arquivo_entrada)
+    
+    for lexema in lexico:
+        if not lexema[1] == lexico_transicao.Token.INICIO:
+            resultado = insere_tabela(lexema, tabela)
+            
+            if resultado:
+                yield resultado["tipo"], lexema[2]
+            else:
+                yield lexema
 
 def troca_estado(tabela, caractere, flag, lexema):
     lexema += caractere["cabeca"]
@@ -77,7 +77,7 @@ def analisador_lexico(arquivo_entrada):
         if not tabela_transicao[flag].EH_FINAL:
             lexema, flag, tem_transicao = troca_estado(tabela_transicao, c, flag, lexema)
 
-        if not tem_transicao and not (tabela_transicao[flag].EH_FINAL):
+        if not tem_transicao and not (tabela_transicao[flag].EH_FINAL): #se nao eh terminal e nao tem transicao, retorna erro
             print("ERRO!\nLexema: " + str(lexema))
             print("Posicao: " + "Linha: " + str(c["linha_caractere"]) + " Coluna: " + str(c["coluna_caractere"]))
             break

@@ -104,7 +104,7 @@ def transicoes():
         TAFD.TransicoesAFD(N_TRANSICAO=25,  EH_FINAL=True,  RETORNO=Token.COND_THEN),
 
         #TRANSICOES GERAIS (ID, CONSTANTES, ORTOGRAFIA)
-        TAFD.TransicoesAFD(N_TRANSICAO=101, EH_FINAL=False, TRANSICOES=[(letras + numeros, 101), ("\n", 5), ("".join(char for char in ascii_characters if char not in (letras + numeros)),5,),],),
+        TAFD.TransicoesAFD(N_TRANSICAO=101, EH_FINAL=False, TRANSICOES=[(letras + numeros, 101), ("\n", 5), ("".join(char for char in ascii_characters if char not in (letras + numeros)), 5,),],),
         TAFD.TransicoesAFD(N_TRANSICAO=5,   EH_FINAL=True,  LOOKAHEAD=True, RETORNO=Token.ID),
         TAFD.TransicoesAFD(N_TRANSICAO=53,  EH_FINAL=False, TRANSICOES=[(numeros, 53), (".", 54), ("".join(char for char in ascii_characters if char not in (numeros + ".")), 55, ), ("\n", 55),],),
         TAFD.TransicoesAFD(N_TRANSICAO=55,  EH_FINAL=True,  LOOKAHEAD=True, RETORNO=Token.CONST_INT),

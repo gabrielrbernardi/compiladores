@@ -1,7 +1,7 @@
 program inicio()
 begin
-valorA := 200;
-valorB := 5;
+IDADE := 200;
+valorB := 14;
 resultado := valorA + valorB;
 repeat
 a := a + 10;
