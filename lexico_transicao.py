@@ -151,18 +151,21 @@ def transicoes():
         TAFD.TransicoesAFD(N_TRANSICAO=100, EH_FINAL=True,  RETORNO=Token.FINAL_ARQUIVO),
     ]
 
-    return verifica_tabela_simbolos(transicoes_existentes)
+    return verifica_transicoes(transicoes_existentes)
 
 
-def verifica_tabela_simbolos(tabela):
-    table = {}
+def verifica_transicoes(tabela):
+    tabela = {}
 
-    for elem in tabela:
-        table[elem.N_TRANSICAO] = elem
+    for x in tabela:
+        tabela[x.N_TRANSICAO] = x
 
-    for k, v in table.items():
-        for trans in v.TRANSICOES:
-            if trans[1] not in table:
-                raise Exception(f"TRANSIÇÃO INVALIDA EM [{v}] NA TRANSICAO {trans}")
+    for _, x in tabela.items():
+        for transicao in x.TRANSICOES:
+            if transicao[1] not in tabela:
+                print("Transicao Invalida!")
+                print("Indice: " + str(x))
+                print("Transicao: " + str(transicao))
+                exit(-1)
 
-    return table
+    return tabela
