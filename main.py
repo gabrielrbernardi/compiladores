@@ -12,9 +12,9 @@ if __name__ == '__main__':
     print("2 - Caso de teste 02")
     print("3 - Caso de teste 03")
     print("4 - Caso de teste 04")
-    # resposta = int(input("Selecione o caso de teste: "))
+    resposta = int(input("Selecione o caso de teste: "))
 
-    resposta = 2
+    # resposta = 2
 
     if resposta == 1:
         test_file = teste01

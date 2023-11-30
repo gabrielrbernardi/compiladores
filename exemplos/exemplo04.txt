@@ -1,4 +1,4 @@
-program inicio()(
+program inicio() (
 repeat
 IDADE
 14
