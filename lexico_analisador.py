@@ -1,6 +1,4 @@
 import lexico_transicao
-import lexico_transicao
-from lexico_simbolos import Tabela_Simbolos
 
 # global quantidade_Abre_Parenteses, quantidade_Fecha_Parenteses
 quantidade_Abre_Parenteses = 0
@@ -42,16 +40,15 @@ def analisador_lexico(arquivo_entrada):
         if tabela_transicao[flag].EH_FINAL:
             if verifica_valores(lexema) == -1:
                 return
-            if tabela_transicao[flag].LOOKAHEAD:
-                yield (lexema[:-1], tabela_transicao[flag].RETORNO, inicio_posicao_lexema)
-                lexema = ""
-                flag = 0
-                inicio_posicao_lexema = (c["linha_caractere"], c["coluna_caractere"])
-            else:
+            
+            if not tabela_transicao[flag].LOOKAHEAD:
                 yield (lexema, tabela_transicao[flag].RETORNO, inicio_posicao_lexema)
-                lexema = ""
-                flag = 0
-                inicio_posicao_lexema = (c["linha_caractere"], c["coluna_caractere"])
+            else:
+                yield (lexema[:-1], tabela_transicao[flag].RETORNO, inicio_posicao_lexema)
+
+            lexema = ""
+            flag = 0
+            inicio_posicao_lexema = (c["linha_caractere"], c["coluna_caractere"])
 
         if not tabela_transicao[flag].EH_FINAL:
             lexema, flag, tem_transicao = troca_estado(tabela_transicao, c, flag, lexema)
@@ -81,7 +78,7 @@ def inicia_lexico(arquivo_entrada, tabela):
             resultado = insere_tabela(lexema, tabela)
             
             if resultado:
-                yield resultado["tipo"], resultado["tipo"], lexema[2]
+                yield resultado["tipo"], lexema[2]
             else:
                 yield lexema
 
@@ -118,33 +115,30 @@ def insere_tabela(lexema, tabela):
         "^"
     ]
 
+    posicao = lexema[2]
+
+    #verifica se eh palavra reservada
     if lex in reservado:
         retorno_insercao = tabela.insercao(tipo = tipo, lexema = lex)
-        # return tabela.insercao(tipo = tipo, lexema = lex)
-        # return
     
+    #verifica se pertence a algum operador
     elif lex in operadores:
         retorno_insercao = tabela.insercao(tipo = tipo, lexema = lex)
-        # return
     
+    #verifica se eh ID
     elif tipo in [lexico_transicao.Token.ID]:
-        retorno_insercao = tabela.insercao(tipo=tipo, lexema=lex, tipo_dado="ID", valor=None)
-        # print(retorno_insercao)
-        # print("ID Adicionado", end="")
+        retorno_insercao = tabela.insercao(tipo=tipo, lexema=lex, valor=None)
 
-    elif tipo in [lexico_transicao.Token.CONST_INT, lexico_transicao.Token.CONST_FLOAT, lexico_transicao.Token.NC, lexico_transicao.Token.CHAR]:
-        retorno_insercao = tabela.insercao(tipo=tipo, lexema=lex, valor=None, tipo_dado=None)
-        # print(retorno_insercao)
-        # print("Constante Adicionada", end="")
+    #verifica se eh algum tipo de constante
+    elif tipo in [lexico_transicao.Token.CONST_INT, lexico_transicao.Token.CONST_FLOAT, lexico_transicao.Token.NC, lexico_transicao.Token.CONST_CHAR]:
+        retorno_insercao = tabela.insercao(tipo=tipo, lexema=lex, valor=None)
 
     try:
         if (retorno_insercao):
-            # print("\n")
             print("Tipo:", retorno_insercao["tipo"])
             print("Lexema:", retorno_insercao["lexema"])
-            # if(retorno_insercao["dado"]):
-            #     print("Tipo de dado:", retorno_insercao["dado"])
             print("Indice:", retorno_insercao["indice"])
+            print("Posicao Arquivo:", posicao)
             print("\n")
     except:
         pass
@@ -155,7 +149,6 @@ def verifica_valores(lexema):
     if lexema == "(":
         global quantidade_Abre_Parenteses
         quantidade_Abre_Parenteses += 1
-        # print("abre", quantidade_Abre_Parenteses)
     
     if lexema == "{":
         global quantidade_Abre_Chaves
@@ -164,7 +157,6 @@ def verifica_valores(lexema):
     if lexema == ")":
         global quantidade_Fecha_Parenteses
         quantidade_Fecha_Parenteses += 1
-        # print("fecha", quantidade_Fecha_Parenteses)
     
     if lexema == "}":
         global quantidade_Fecha_Chaves
@@ -172,8 +164,7 @@ def verifica_valores(lexema):
 
     if lexema == '$':
         if quantidade_Abre_Parenteses == quantidade_Fecha_Parenteses and quantidade_Abre_Chaves == quantidade_Fecha_Chaves:
-            print("Final de Arquivo. Leitura encerrada. Tudo OK!")
-            # print("ta ok")
+            print("Final de Arquivo. Leitura encerrada. OK!")
             pass
         else:
             print("ERRO! A utilizacao dos parenteses ou chaves nao esta correta")
